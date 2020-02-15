@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -9,10 +10,13 @@ import (
 
 type (
 	Config struct {
-		AccountKey string
-		Account    string
-		Container  string
-		Source     string
+		AccountKey  string
+		Account     string
+		Container   string
+		Source      string
+		Destination string
+		Operation   string
+		Include     string
 	}
 
 	Plugin struct {
@@ -21,25 +25,49 @@ type (
 )
 
 func (p Plugin) Exec() error {
-	return p.execute(p.command())
+	cmd, err := p.command()
+	if err != nil {
+		return err
+	}
+	return p.execute(cmd)
 }
 
-func (p *Plugin) command() *exec.Cmd {
-	args := []string{
-		p.Config.Account,
-		p.Config.Container,
-		p.Config.Source,
+func (p *Plugin) command() (*exec.Cmd, error) {
+	args := []string{}
+
+	switch p.Config.Operation {
+	case "upload":
+		args = append(args, "upload")
+		args = append(args, fmt.Sprintf("--local-path=%s", p.Config.Source))
+		args = append(
+			args,
+			fmt.Sprintf("--remote-path=%s/%s", p.Config.Container, p.Config.Destination),
+		)
+	case "download":
+		args = append(args, "download")
+		args = append(
+			args,
+			fmt.Sprintf("--remote-path=%s/%s", p.Config.Container, p.Config.Source),
+		)
+		args = append(args, fmt.Sprintf("--local-path=%s", p.Config.Destination))
+	default:
+		return nil, errors.New(fmt.Sprintf("Invalid operation: %s", p.Config.Operation))
 	}
 
+	if p.Config.Include != "" {
+		args = append(args, fmt.Sprintf("--include=%s", p.Config.Include))
+	}
+
+	args = append(args, fmt.Sprintf("--storage-account=%s", p.Config.Account))
 	args = append(
 		args,
-		fmt.Sprintf("--storageaccountkey=%s", p.Config.AccountKey),
+		fmt.Sprintf("--storage-account-key=%s", p.Config.AccountKey),
 	)
 
 	return exec.Command(
 		"blobxfer",
 		args...,
-	)
+	), nil
 }
 
 func (p Plugin) execute(cmd *exec.Cmd) error {

@@ -39,6 +39,21 @@ func main() {
 			Usage:  "source",
 			EnvVar: "PLUGIN_SOURCE,AZURE_STORAGE_SOURCE",
 		},
+		cli.StringFlag{
+			Name:   "destination",
+			Usage:  "destination",
+			EnvVar: "PLUGIN_DESTINATION,AZURE_STORAGE_DESTINATION",
+		},
+		cli.StringFlag{
+			Name:   "operation",
+			Usage:  "operation",
+			EnvVar: "PLUGIN_OPERATION,AZURE_STORAGE_OPERATION",
+		},
+		cli.StringFlag{
+			Name:   "include",
+			Usage:  "include",
+			EnvVar: "PLUGIN_INCLUDE,AZURE_STORAGE_INCLUDE",
+		},
 	}
 
 	if err := app.Run(os.Args); err != nil {
@@ -49,10 +64,13 @@ func main() {
 func run(c *cli.Context) error {
 	plugin := Plugin{
 		Config: Config{
-			AccountKey: c.String("account-key"),
-			Account:    c.String("account"),
-			Container:  c.String("container"),
-			Source:     c.String("source"),
+			AccountKey:  c.String("account-key"),
+			Account:     c.String("account"),
+			Container:   c.String("container"),
+			Source:      c.String("source"),
+			Destination: c.String("destination"),
+			Operation:   c.String("operation"),
+			Include:     c.String("include"),
 		},
 	}
 
