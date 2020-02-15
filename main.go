@@ -64,13 +64,13 @@ func main() {
 func run(c *cli.Context) error {
 	plugin := Plugin{
 		Config: Config{
-			AccountKey: c.String("account-key"),
-			Account:    c.String("account"),
-			Container:  c.String("container"),
-			Source:     c.String("source"),
+			AccountKey:  c.String("account-key"),
+			Account:     c.String("account"),
+			Container:   c.String("container"),
+			Source:      c.String("source"),
 			Destination: c.String("destination"),
-			Operation:  c.String("operation"),
-			Include:    c.String("include"),
+			Operation:   c.String("operation"),
+			Include:     c.String("include"),
 		},
 	}
 

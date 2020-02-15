@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -9,13 +10,13 @@ import (
 
 type (
 	Config struct {
-		AccountKey string
-		Account    string
-		Container  string
-		Source     string
+		AccountKey  string
+		Account     string
+		Container   string
+		Source      string
 		Destination string
-		Operation  string
-		Include    string
+		Operation   string
+		Include     string
 	}
 
 	Plugin struct {
@@ -24,10 +25,14 @@ type (
 )
 
 func (p Plugin) Exec() error {
-	return p.execute(p.command())
+	cmd, err := p.command()
+	if err != nil {
+		return err
+	}
+	return p.execute(cmd)
 }
 
-func (p *Plugin) command() *exec.Cmd {
+func (p *Plugin) command() (*exec.Cmd, error) {
 	args := []string{}
 
 	switch p.Config.Operation {
@@ -46,8 +51,7 @@ func (p *Plugin) command() *exec.Cmd {
 		)
 		args = append(args, fmt.Sprintf("--local-path=%s", p.Config.Destination))
 	default:
-		// TODO return error
-		return nil
+		return nil, errors.New(fmt.Sprintf("Invalid operation: %s", p.Config.Operation))
 	}
 
 	if p.Config.Include != "" {
@@ -63,7 +67,7 @@ func (p *Plugin) command() *exec.Cmd {
 	return exec.Command(
 		"blobxfer",
 		args...,
-	)
+	), nil
 }
 
 func (p Plugin) execute(cmd *exec.Cmd) error {
