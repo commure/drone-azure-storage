@@ -89,7 +89,7 @@ steps:
     username: commuredev
     password:
       from_secret: docker_password
-    repo: plugins/azure-storage
+    repo: commuredev.azurecr.io/plugins/azure-storage
     registry: commuredev.azurecr.io
     tags: linux-amd64
   when:
@@ -107,7 +107,7 @@ steps:
     username: commuredev
     password:
       from_secret: docker_password
-    repo: plugins/azure-storage
+    repo: commuredev.azurecr.io/plugins/azure-storage
     registry: commuredev.azurecr.io
   when:
     event:
