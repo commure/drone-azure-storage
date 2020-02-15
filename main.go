@@ -49,6 +49,11 @@ func main() {
 			Usage:  "operation",
 			EnvVar: "PLUGIN_OPERATION,AZURE_STORAGE_OPERATION",
 		},
+		cli.StringFlag{
+			Name:   "include",
+			Usage:  "include",
+			EnvVar: "PLUGIN_INCLUDE,AZURE_STORAGE_INCLUDE",
+		},
 	}
 
 	if err := app.Run(os.Args); err != nil {
@@ -65,6 +70,7 @@ func run(c *cli.Context) error {
 			Source:     c.String("source"),
 			Destination: c.String("destination"),
 			Operation:  c.String("operation"),
+			Include:    c.String("include"),
 		},
 	}
 

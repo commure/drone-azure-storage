@@ -15,6 +15,7 @@ type (
 		Source     string
 		Destination string
 		Operation  string
+		Include    string
 	}
 
 	Plugin struct {
@@ -47,6 +48,10 @@ func (p *Plugin) command() *exec.Cmd {
 	default:
 		// TODO return error
 		return nil
+	}
+
+	if p.Config.Include != "" {
+		args = append(args, fmt.Sprintf("--include=%s", p.Config.Include))
 	}
 
 	args = append(args, fmt.Sprintf("--storage-account=%s", p.Config.Account))
