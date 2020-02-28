@@ -63,6 +63,7 @@ func (p *Plugin) command() (*exec.Cmd, error) {
 		args,
 		fmt.Sprintf("--storage-account-key=%s", p.Config.AccountKey),
 	)
+	args = append(args, "--verbose")
 
 	return exec.Command(
 		"blobxfer",
